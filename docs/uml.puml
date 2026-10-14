@@ -1,0 +1,64 @@
+@startuml
+title Banking Alert System — Bridge Pattern
+
+skinparam classAttributeIconSize 0
+
+interface MessageSender {
+    +sendMessage(recipient: String, title: String, body: String): boolean
+    +isAvailable(): boolean
+    +getChannelName(): String
+}
+
+abstract class Notification {
+    #sender: MessageSender
+    +Notification(sender: MessageSender)
+    +setSender(sender: MessageSender): void
+    +getSender(): MessageSender
+    +send(recipient: String, message: String): void
+}
+
+class UrgentNotification {
+    -fallbackSender: MessageSender
+    +send(recipient: String, message: String): void
+}
+
+class EncryptedNotification {
+    +send(recipient: String, message: String): void
+}
+
+class ScheduledBatchNotification {
+    -recipients: List<String>
+    +send(message: String): void
+    +sendToAll(message: String): void
+}
+
+class MarketingNotification {
+    +send(recipient: String, message: String): void
+}
+
+class TelegramMessageSender
+class EmailMessageSender
+class SmsMessageSender
+class KafkaEventSender
+class PushNotificationSender
+
+class MessageEncoder {
+    +encode(message: String): String
+}
+
+Notification o--> MessageSender : Bridge
+Notification <|-- UrgentNotification
+Notification <|-- EncryptedNotification
+Notification <|-- ScheduledBatchNotification
+Notification <|-- MarketingNotification
+
+MessageSender <|.. TelegramMessageSender
+MessageSender <|.. EmailMessageSender
+MessageSender <|.. SmsMessageSender
+MessageSender <|.. KafkaEventSender
+MessageSender <|.. PushNotificationSender
+
+UrgentNotification --> MessageSender : fallbackSender
+EncryptedNotification ..> MessageEncoder : uses
+
+@enduml
