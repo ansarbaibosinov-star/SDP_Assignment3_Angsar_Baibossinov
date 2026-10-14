@@ -34,7 +34,7 @@ public class Main {
                 new UrgentNotification(telegram, sms);
 
         urgent.send(
-                "customer123",
+                "customer:Maksat",
                 "Suspicious transaction detected: 500000 KZT"
         );
 
@@ -45,7 +45,7 @@ public class Main {
                 new EncryptedNotification(email);
 
         encrypted.send(
-                "customer456",
+                "customer:Aray",
                 "Payment confirmed: 25000 KZT"
         );
 
@@ -56,9 +56,9 @@ public class Main {
                 new ScheduledBatchNotification(
                         sms,
                         List.of(
-                                "customer101",
-                                "customer102",
-                                "customer103"
+                                "customer1",
+                                "customer2",
+                                "customer3"
                         )
                 );
 
@@ -72,14 +72,14 @@ public class Main {
         urgent.setSender(telegram);
 
         urgent.send(
-                "customer123",
+                "customer4",
                 "Your account security status has been updated."
         );
 
         urgent.setSender(email);
 
         urgent.send(
-                "customer123",
+                "customer4",
                 "Your account security status has been updated."
         );
 
@@ -90,7 +90,7 @@ public class Main {
         urgent.setSender(telegram);
 
         urgent.send(
-                "customer123",
+                "customer4",
                 "Suspicious login detected from a new device."
         );
 
@@ -101,7 +101,7 @@ public class Main {
                 new MarketingNotification(push);
 
         marketing.send(
-                "customer789",
+                "customer7",
                 "Get 5% cashback on eligible purchases this month!"
         );
     }
