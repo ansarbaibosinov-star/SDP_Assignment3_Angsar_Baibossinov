@@ -1,9 +1,11 @@
 package com.bank.alerts;
 
 import com.bank.alerts.abstraction.EncryptedNotification;
+import com.bank.alerts.abstraction.MarketingNotification;
 import com.bank.alerts.abstraction.ScheduledBatchNotification;
 import com.bank.alerts.abstraction.UrgentNotification;
 import com.bank.alerts.sender.EmailMessageSender;
+import com.bank.alerts.sender.PushNotificationSender;
 import com.bank.alerts.sender.SmsMessageSender;
 import com.bank.alerts.sender.TelegramMessageSender;
 
@@ -22,7 +24,12 @@ public class Main {
         SmsMessageSender sms =
                 new SmsMessageSender();
 
-        // Scenario 1: Urgent notification via Telegram.
+        PushNotificationSender push =
+                new PushNotificationSender();
+
+        // 1. UrgentNotification + Telegram
+        System.out.println("\n--- DEMO 1: URGENT + TELEGRAM ---");
+
         UrgentNotification urgent =
                 new UrgentNotification(telegram, sms);
 
@@ -31,7 +38,9 @@ public class Main {
                 "Suspicious transaction detected: 500000 KZT"
         );
 
-        // Scenario 2: Encrypted notification via Email.
+        // 2. EncryptedNotification + Email
+        System.out.println("\n--- DEMO 2: ENCRYPTED + EMAIL ---");
+
         EncryptedNotification encrypted =
                 new EncryptedNotification(email);
 
@@ -40,14 +49,16 @@ public class Main {
                 "Payment confirmed: 25000 KZT"
         );
 
-        // Scenario 3: Batch notification via SMS.
+        // 3. ScheduledBatchNotification + SMS
+        System.out.println("\n--- DEMO 3: BATCH + SMS ---");
+
         ScheduledBatchNotification batch =
                 new ScheduledBatchNotification(
                         sms,
                         List.of(
-                                "User1",
-                                "User2",
-                                "User3"
+                                "customer101",
+                                "customer102",
+                                "customer103"
                         )
                 );
 
@@ -55,12 +66,43 @@ public class Main {
                 "Your monthly bank statement is ready."
         );
 
-        // Scenario 4: Telegram unavailable, fallback to SMS.
-        telegram.setAvailable(false);
+        // 4. Runtime switching: Telegram -> Email
+        System.out.println("\n--- DEMO 4: RUNTIME SWITCHING ---");
+
+        urgent.setSender(telegram);
 
         urgent.send(
                 "customer123",
-                "Suspicious login detected."
+                "Your account security status has been updated."
+        );
+
+        urgent.setSender(email);
+
+        urgent.send(
+                "customer123",
+                "Your account security status has been updated."
+        );
+
+        // 5. Telegram unavailable -> fallback to SMS
+        System.out.println("\n--- DEMO 5: FALLBACK TO SMS ---");
+
+        telegram.setAvailable(false);
+        urgent.setSender(telegram);
+
+        urgent.send(
+                "customer123",
+                "Suspicious login detected from a new device."
+        );
+
+        // 6. MarketingNotification + PushNotificationSender
+        System.out.println("\n--- DEMO 6: MARKETING + PUSH ---");
+
+        MarketingNotification marketing =
+                new MarketingNotification(push);
+
+        marketing.send(
+                "customer789",
+                "Get 5% cashback on eligible purchases this month!"
         );
     }
 }
